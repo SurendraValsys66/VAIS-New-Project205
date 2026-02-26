@@ -26,21 +26,25 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "Our amazing features and benefits",
           features: [
             {
+              id: "feature-1",
               icon: "target",
               title: "Feature One",
               description: "Description of your amazing feature",
             },
             {
+              id: "feature-2",
               icon: "zap",
               title: "Feature Two",
               description: "Another great benefit for customers",
             },
             {
+              id: "feature-3",
               icon: "users",
               title: "Feature Three",
               description: "Connect with your community",
             },
             {
+              id: "feature-4",
               icon: "bar-chart-2",
               title: "Feature Four",
               description: "Track your progress and growth",
@@ -65,11 +69,13 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "We care about your success",
           features: [
             {
+              id: "feature-5",
               icon: "heart",
               title: "Care",
               description: "We genuinely care about our customers",
             },
             {
+              id: "feature-6",
               icon: "shield",
               title: "Security",
               description: "Your data is safe with us",
@@ -125,16 +131,19 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "Special Offer - About Your Business",
           features: [
             {
+              id: "feature-7",
               icon: "rocket",
               title: "Fast",
               description: "Lightning quick performance",
             },
             {
+              id: "feature-8",
               icon: "globe",
               title: "Global",
               description: "Reach customers worldwide",
             },
             {
+              id: "feature-9",
               icon: "award",
               title: "Award Winning",
               description: "Industry recognized excellence",
@@ -179,16 +188,19 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "Everything you need to succeed",
           features: [
             {
+              id: "feature-10",
               icon: "check",
               title: "Easy to Use",
               description: "Simple and intuitive interface",
             },
             {
+              id: "feature-11",
               icon: "lock",
               title: "Secure",
               description: "Enterprise-grade security",
             },
             {
+              id: "feature-12",
               icon: "trending-up",
               title: "Scalable",
               description: "Grows with your business",
@@ -252,11 +264,13 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "What we offer to our customers",
           features: [
             {
+              id: "feature-19",
               icon: "leaf",
               title: "Eco Friendly",
               description: "Sustainable solutions",
             },
             {
+              id: "feature-20",
               icon: "smile",
               title: "Customer Happy",
               description: "Your satisfaction matters",
@@ -301,16 +315,19 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "Extra Discount - About Your Business",
           features: [
             {
+              id: "feature-21",
               icon: "star",
               title: "Excellence",
               description: "Top quality service delivery",
             },
             {
+              id: "feature-22",
               icon: "briefcase",
               title: "Professional",
               description: "Expert team at your service",
             },
             {
+              id: "feature-23",
               icon: "message-circle",
               title: "Support",
               description: "Always here to help",
@@ -385,16 +402,19 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "Comprehensive solutions for your business",
           features: [
             {
+              id: "feature-24",
               icon: "target",
               title: "Strategy",
               description: "Develop winning strategies",
             },
             {
+              id: "feature-25",
               icon: "bar-chart-2",
               title: "Analytics",
               description: "Data-driven insights",
             },
             {
+              id: "feature-26",
               icon: "users",
               title: "Team Building",
               description: "Build strong teams",
@@ -410,12 +430,14 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           heading: "What Our Clients Say",
           testimonials: [
             {
+              id: "testimonial-1",
               name: "Jane Smith",
               company: "Tech Startup",
               quote: "They transformed our business strategy!",
               imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200",
             },
             {
+              id: "testimonial-2",
               name: "John Doe",
               company: "Manufacturing Co",
               quote: "Best decision we made for our company",
@@ -462,16 +484,19 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "Scalable solutions for large organizations",
           features: [
             {
+              id: "feature-27",
               icon: "shield",
               title: "Security",
               description: "Enterprise-grade protection",
             },
             {
+              id: "feature-28",
               icon: "zap",
               title: "Performance",
               description: "Lightning fast processing",
             },
             {
+              id: "feature-29",
               icon: "users",
               title: "Collaboration",
               description: "Team coordination tools",
@@ -537,16 +562,19 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "Data-driven and results-focused",
           features: [
             {
+              id: "feature-30",
               icon: "zap",
               title: "Fast Results",
               description: "See improvements in weeks",
             },
             {
+              id: "feature-31",
               icon: "trending-up",
               title: "Growth Focused",
               description: "Maximize your potential",
             },
             {
+              id: "feature-32",
               icon: "message-circle",
               title: "Personal Support",
               description: "One-on-one guidance",
@@ -562,12 +590,14 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           heading: "Success Stories",
           testimonials: [
             {
+              id: "testimonial-3",
               name: "Client 1",
               company: "E-commerce Business",
               quote: "Increased revenue by 300% in 6 months!",
               imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200",
             },
             {
+              id: "testimonial-4",
               name: "Client 2",
               company: "Service Provider",
               quote: "Game-changer for my business",
@@ -625,16 +655,19 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           description: "Comprehensive nutrition services",
           features: [
             {
+              id: "feature-33",
               icon: "heart",
               title: "Personal Plans",
               description: "Customized for your goals",
             },
             {
+              id: "feature-34",
               icon: "book",
               title: "Education",
               description: "Learn sustainable habits",
             },
             {
+              id: "feature-35",
               icon: "users",
               title: "Support",
               description: "Ongoing accountability",
@@ -650,12 +683,14 @@ export const landingPageTemplates: Omit<LandingPage, "id" | "createdAt" | "updat
           heading: "Client Transformations",
           testimonials: [
             {
+              id: "testimonial-5",
               name: "Sarah",
               company: "Lost 25 lbs",
               quote: "Finally found a nutrition plan that works!",
               imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200",
             },
             {
+              id: "testimonial-6",
               name: "Mike",
               company: "Increased Energy",
               quote: "Feel amazing and have more energy than ever!",
