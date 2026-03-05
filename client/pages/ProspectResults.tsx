@@ -578,6 +578,7 @@ export default function ProspectResults() {
   const [selectedProspect, setSelectedProspect] = useState<ProspectData | null>(
     null,
   );
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     jobFunction: "",
     jobLevel: "",
@@ -1602,6 +1603,8 @@ export default function ProspectResults() {
                               selectedItems.includes(prospect.id) &&
                                 "bg-blue-50",
                             )}
+                            onMouseEnter={() => setHoveredRowId(prospect.id)}
+                            onMouseLeave={() => setHoveredRowId(null)}
                           >
                             <TableCell className="pl-6">
                               <Checkbox
@@ -2378,6 +2381,120 @@ export default function ProspectResults() {
                                     </SheetContent>
                                   </Sheet>
                                 </div>
+                              </TableCell>
+                            )}
+
+                            {/* Actions - Quick View Button */}
+                            {columnVisibility.actions && (
+                              <TableCell>
+                                {hoveredRowId === prospect.id && (
+                                  <Sheet>
+                                    <SheetTrigger asChild>
+                                      <Button
+                                        variant="default"
+                                        size="sm"
+                                        className="bg-valasys-orange hover:bg-valasys-orange/90 text-white gap-1 h-8"
+                                        aria-label="Quick view prospect"
+                                        onClick={() =>
+                                          setSelectedProspect(prospect)
+                                        }
+                                      >
+                                        <Eye className="w-4 h-4" />
+                                        <span className="text-xs font-medium">
+                                          Quick View
+                                        </span>
+                                      </Button>
+                                    </SheetTrigger>
+                                    <SheetContent
+                                      side="right"
+                                      className="sm:max-w-md md:max-w-lg lg:max-w-xl w-[90vw] h-screen overflow-y-auto"
+                                    >
+                                      <SheetHeader>
+                                        <SheetTitle className="flex items-center justify-between">
+                                          <div className="flex items-center space-x-3">
+                                            <Avatar className="h-12 w-12">
+                                              <AvatarImage
+                                                src={prospect.profileImageUrl}
+                                                alt={prospect.fullName}
+                                              />
+                                              <AvatarFallback className="bg-valasys-orange text-white">
+                                                {prospect.firstName[0]}
+                                                {prospect.lastName[0]}
+                                              </AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                              <div className="text-xl font-bold">
+                                                {prospect.fullName}
+                                              </div>
+                                              <div className="text-sm text-gray-600 font-normal">
+                                                {prospect.jobTitle} at{" "}
+                                                {prospect.companyName}
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <Badge
+                                              variant="secondary"
+                                              className={cn(
+                                                "border",
+                                                getIntentSignalColor(
+                                                  prospect.intentSignal,
+                                                ),
+                                              )}
+                                            >
+                                              {prospect.intentSignal}
+                                            </Badge>
+                                            <Tooltip>
+                                              <TooltipTrigger asChild>
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  aria-label={
+                                                    isFavorite(prospect.id)
+                                                      ? "Remove favorite"
+                                                      : "Add favorite"
+                                                  }
+                                                  onClick={() =>
+                                                    toggleFavorite(
+                                                      prospect.id,
+                                                      prospect.fullName,
+                                                    )
+                                                  }
+                                                >
+                                                  <Star
+                                                    className={cn(
+                                                      "w-4 h-4",
+                                                      isFavorite(prospect.id)
+                                                        ? "text-yellow-500"
+                                                        : "text-gray-500",
+                                                    )}
+                                                    fill={
+                                                      isFavorite(prospect.id)
+                                                        ? "currentColor"
+                                                        : "none"
+                                                    }
+                                                  />
+                                                </Button>
+                                              </TooltipTrigger>
+                                              <TooltipContent>
+                                                {isFavorite(prospect.id)
+                                                  ? "Unfavorite"
+                                                  : "Add to favorites"}
+                                              </TooltipContent>
+                                            </Tooltip>
+                                          </div>
+                                        </SheetTitle>
+                                        <SheetDescription>
+                                          Quick prospect overview
+                                        </SheetDescription>
+                                      </SheetHeader>
+
+                                      <div className="py-4 text-center text-gray-600">
+                                        <p>Click on the prospect details in the Contact Info column for full information</p>
+                                      </div>
+                                    </SheetContent>
+                                  </Sheet>
+                                )}
                               </TableCell>
                             )}
                           </TableRow>
