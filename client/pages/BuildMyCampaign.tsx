@@ -117,18 +117,7 @@ export default function BuildMyCampaign() {
 
               {activeTab === "form" && (
                 <div className="p-6 mt-0">
-                  <div className="space-y-4">
-                    <div>
-                      <h2 className="text-xl font-semibold text-valasys-gray-900">
-                        Campaign Request Form
-                      </h2>
-                      <p className="text-sm text-valasys-gray-600">
-                        Fill out the details below to create a new campaign
-                        request
-                      </p>
-                    </div>
-                    <CampaignRequestForm />
-                  </div>
+                  <CampaignRequestForm />
                 </div>
               )}
 

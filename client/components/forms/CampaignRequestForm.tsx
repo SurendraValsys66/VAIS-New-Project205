@@ -1190,7 +1190,53 @@ export default function CampaignRequestForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Premium Header Section */}
+        <div className="mb-8 bg-gradient-to-r from-orange-50 via-white to-orange-50 rounded-2xl p-8 border border-orange-100 shadow-sm">
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-1 w-12 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full"></div>
+                <span className="text-sm font-semibold text-orange-600 uppercase tracking-widest">Campaign Setup</span>
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+                Create Your Campaign
+              </h2>
+              <p className="text-base text-gray-600 max-w-lg leading-relaxed">
+                Set up your targeting criteria and choose how you want to manage your campaign—either live analytics or bulk file uploads.
+              </p>
+            </div>
+            <div className="flex flex-col items-end gap-4">
+              <div className="flex flex-col items-end">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Campaign Mode</span>
+                <ToggleGroup
+                  type="single"
+                  value={campaignMode}
+                  onValueChange={(value) => {
+                    if (value) setCampaignMode(value as "live" | "tal");
+                  }}
+                  className="bg-white border border-orange-200 rounded-xl p-1 shadow-sm"
+                >
+                  <ToggleGroupItem
+                    value="live"
+                    aria-label="Live mode"
+                    className="text-sm font-semibold px-5 py-2.5 rounded-lg data-[state=on]:bg-orange-500 data-[state=on]:text-white data-[state=off]:text-gray-600 transition-all duration-200"
+                  >
+                    Live
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="tal"
+                    aria-label="TAL File mode"
+                    className="text-sm font-semibold px-5 py-2.5 rounded-lg data-[state=on]:bg-orange-500 data-[state=on]:text-white data-[state=off]:text-gray-600 transition-all duration-200"
+                  >
+                    TAL File
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
           {/* LEFT COLUMN */}
           <div className="space-y-6">
             {/* Section 1: Campaign Details */}
@@ -1411,38 +1457,13 @@ export default function CampaignRequestForm() {
 
             {/* Section 4: Submit Campaign */}
             <div className="bg-gradient-to-b from-orange-50 to-orange-100 border-2 border-orange-300 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-500 text-white text-sm font-semibold">
-                    {campaignMode === "tal" ? 4 : 3}
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900">
-                    Campaign Request
-                  </h3>
-                </div>
-                <ToggleGroup
-                  type="single"
-                  value={campaignMode}
-                  onValueChange={(value) => {
-                    if (value) setCampaignMode(value as "live" | "tal");
-                  }}
-                  className="bg-white border border-gray-300 rounded-lg p-1"
-                >
-                  <ToggleGroupItem
-                    value="live"
-                    aria-label="Live mode"
-                    className="text-xs font-medium px-3 py-1.5 data-[state=on]:bg-blue-500 data-[state=on]:text-white data-[state=off]:text-gray-700"
-                  >
-                    Live
-                  </ToggleGroupItem>
-                  <ToggleGroupItem
-                    value="tal"
-                    aria-label="TAL File mode"
-                    className="text-xs font-medium px-3 py-1.5 data-[state=on]:bg-purple-500 data-[state=on]:text-white data-[state=off]:text-gray-700"
-                  >
-                    TAL File
-                  </ToggleGroupItem>
-                </ToggleGroup>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-500 text-white text-sm font-semibold">
+                  {campaignMode === "tal" ? 4 : 3}
+                </span>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Campaign Request
+                </h3>
               </div>
 
               <p className="text-xs text-gray-700 mb-3">
