@@ -172,60 +172,97 @@ export const AIBuilder: React.FC<AIBuilderProps> = ({ onBack, onGenerateComplete
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        {/* Back Button - Top Right */}
-        {onBack && (
-          <div className="w-full flex justify-end mb-6 px-4">
-            <Button
-              onClick={onBack}
-              variant="outline"
-              className="rounded-2xl px-6 py-2"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back
-            </Button>
+      <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
+        {/* Greeting Section */}
+        <div className="text-center mb-12 mt-8">
+          {/* Logo/Icon */}
+          <div className="flex justify-center mb-6">
+            <div className="w-12 h-12 bg-valasys-orange rounded-xl flex items-center justify-center text-white shadow-lg">
+              <Sparkles className="w-6 h-6" />
+            </div>
           </div>
+
+          {/* Main Heading */}
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Afternoon, <span className="text-valasys-orange">Rupali</span>
+          </h1>
+
+          {/* Subheading */}
+          <p className="text-gray-600 text-lg">How can I help you today?</p>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <Alert variant="destructive" className="rounded-xl border-red-200 bg-red-50 mb-6 max-w-2xl">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
-        <div className="w-full max-w-3xl px-4">
-          {/* Error Alert */}
-          {error && (
-            <Alert variant="destructive" className="rounded-xl border-red-200 bg-red-50 mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {/* Centered Textarea with Icon Button */}
-          <div className="relative">
-            <Textarea
-              placeholder="Describe your landing page idea here..."
+        {/* Input Section */}
+        <div className="w-full max-w-2xl mb-8">
+          <div className="flex gap-3">
+            <Input
+              placeholder="Type your landing page description..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               disabled={isGenerating}
-              className="w-full min-h-64 p-6 rounded-2xl border-2 border-gray-100 focus:ring-valasys-orange focus:border-valasys-orange resize-none text-base focus:border-valasys-orange pr-20"
+              className="flex-1 h-12 px-4 rounded-lg border border-gray-200 focus:ring-valasys-orange focus:border-valasys-orange text-base"
             />
-
-            {/* Generate Icon Button in Bottom Right */}
             <Button
               onClick={handleGenerateLayout}
               disabled={isGenerating || !prompt.trim()}
-              size="icon"
               className={cn(
-                "absolute bottom-4 right-4 w-12 h-12 rounded-xl transition-all shadow-lg",
+                "h-12 px-6 rounded-lg font-semibold transition-all",
                 isGenerating || !prompt.trim()
                   ? "bg-gray-200 text-gray-600 cursor-not-allowed"
-                  : "bg-valasys-orange hover:bg-valasys-orange/90 text-white hover:scale-110"
+                  : "bg-valasys-orange hover:bg-valasys-orange/90 text-white shadow-md"
               )}
-              title={isGenerating ? "Generating..." : "Generate Landing Page Design"}
             >
               {isGenerating ? (
-                <Loader className="w-5 h-5 animate-spin" />
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
               ) : (
-                <Sparkles className="w-5 h-5" />
+                "Create 4.0"
               )}
             </Button>
           </div>
+        </div>
+
+        {/* Action Buttons Grid */}
+        <div className="w-full max-w-2xl grid grid-cols-2 md:grid-cols-5 gap-3">
+          <button
+            onClick={() => setPrompt("Create landing page with modern design and clean code")}
+            className="p-3 border border-gray-200 rounded-lg hover:border-valasys-orange hover:bg-orange-50 transition-colors text-sm font-medium text-gray-700"
+          >
+            💻 Code
+          </button>
+          <button
+            onClick={() => setPrompt("Create educational landing page with learning resources")}
+            className="p-3 border border-gray-200 rounded-lg hover:border-valasys-orange hover:bg-orange-50 transition-colors text-sm font-medium text-gray-700"
+          >
+            📚 Learn
+          </button>
+          <button
+            onClick={() => setPrompt("Create engaging landing page with compelling copy")}
+            className="p-3 border border-gray-200 rounded-lg hover:border-valasys-orange hover:bg-orange-50 transition-colors text-sm font-medium text-gray-700"
+          >
+            ✍️ Write
+          </button>
+          <button
+            onClick={() => setPrompt("Create lifestyle landing page with modern aesthetics")}
+            className="p-3 border border-gray-200 rounded-lg hover:border-valasys-orange hover:bg-orange-50 transition-colors text-sm font-medium text-gray-700"
+          >
+            ✨ Life stuff
+          </button>
+          <button
+            onClick={() => setPrompt("Create landing page to clarify product features")}
+            className="p-3 border border-gray-200 rounded-lg hover:border-valasys-orange hover:bg-orange-50 transition-colors text-sm font-medium text-gray-700"
+          >
+            ❓ Clarify choice
+          </button>
         </div>
       </div>
     </DashboardLayout>
