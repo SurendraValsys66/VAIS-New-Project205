@@ -16,7 +16,6 @@ import {
   Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 
 interface RendererProps {
   component: BuilderComponent;
@@ -24,6 +23,7 @@ interface RendererProps {
   onRemove: (id: string) => void;
   onMove: (id: string, targetParentId: string | null, targetIndex: number) => void;
   onAdd: (type: ComponentType, parentId: string | null, index?: number) => void;
+  onDuplicate: (id: string) => void;
   onSelect?: (id: string) => void;
   isSelected?: boolean;
 }
@@ -34,25 +34,12 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
   onRemove,
   onMove,
   onAdd,
+  onDuplicate,
   onSelect,
   isSelected,
 }) => {
-  const { toast } = useToast();
-
   const handleCopyComponent = () => {
-    try {
-      const componentData = JSON.stringify(component, null, 2);
-      navigator.clipboard.writeText(componentData);
-      toast({
-        title: "Copied",
-        description: "Component copied to clipboard.",
-      });
-    } catch (error) {
-      toast({
-        title: "Copy failed",
-        description: "Unable to copy the component.",
-      });
-    }
+    onDuplicate(component.id);
   };
 
   const [{ isDragging }, drag] = useDrag({
@@ -113,6 +100,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
             onRemove={onRemove}
             onMove={onMove}
             onAdd={onAdd}
+            onDuplicate={onDuplicate}
             onSelect={onSelect}
             isSelected={isSelected && component.id === child.id}
           />
@@ -139,7 +127,7 @@ export const ComponentRenderer: React.FC<RendererProps> = ({
           isDragging && "opacity-30",
           component.type === "column" && "w-full md:w-auto h-full",
           isSelected
-            ? "border-2 border-valasys-orange shadow-lg shadow-valasys-orange/20"
+            ? "border-2 border-valasys-orange shadow-lg shadow-valasys-orange/20 element-selected-pulse"
             : "border-2 border-transparent hover:border-valasys-orange hover:border-dashed",
         )}
         style={{
