@@ -8,6 +8,14 @@
    * tailwind.config.ts expects the following color variables to be expressed as HSL values.
    * A different format will require also updating the theme in tailwind.config.ts.
   */
+
+  /* Force LTR on html and body elements */
+  html,
+  body,
+  #root {
+    direction: ltr !important;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 213 27% 18%;
@@ -96,6 +104,23 @@
 
   body {
     @apply bg-background text-foreground;
+    direction: ltr !important;
+  }
+
+  /* Ensure all text elements use LTR direction */
+  p,
+  span,
+  div,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  a,
+  button,
+  label {
+    direction: ltr !important;
   }
 
   /* Disable resizing on contentEditable elements */
