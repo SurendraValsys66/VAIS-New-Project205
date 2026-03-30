@@ -19,6 +19,7 @@ interface HeroElement {
   type: "badge" | "heading" | "paragraph" | "buttons";
   label: string;
   content: string;
+  secondaryContent?: string;
   instanceId: string; // Unique identifier for each instance
 }
 
@@ -37,27 +38,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     badge: "✨ New Release",
     heading: "Build your vision faster than ever.",
     paragraph: "The world's most advanced landing page builder. Drag, drop, and launch in minutes, not days.",
-    buttons: "CTA Buttons",
+    buttons: "Start Free Trial",
   };
 
-  // Initialize hero elements with instance IDs
-  const initializeElements = (): HeroElement[] => {
-    const elements: HeroElement[] = [];
+  const createDefaultElements = React.useCallback((): HeroElement[] => {
     const badges = component.heroBadges?.length
       ? component.heroBadges
       : [{ instanceId: "badge-0", content: component.heroBadgeText || defaultElementContent.badge }];
 
-    badges.forEach((badge) => {
-      elements.push({
+    return [
+      ...badges.map((badge) => ({
         id: badge.instanceId,
         instanceId: badge.instanceId,
-        type: "badge",
+        type: "badge" as const,
         label: "Badge",
         content: badge.content || defaultElementContent.badge,
-      });
-    });
-
-    elements.push(
+      })),
       {
         id: "heading-0",
         instanceId: "heading-0",
@@ -77,38 +73,46 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         instanceId: "buttons-0",
         type: "buttons",
         label: "Buttons",
-        content: defaultElementContent.buttons,
+        content: component.heroPrimaryButtonText || defaultElementContent.buttons,
+        secondaryContent: component.heroSecondaryButtonText || "Watch Demo",
       },
-    );
+    ];
+  }, [
+    component.heroBadges,
+    component.heroBadgeText,
+    component.heroDescriptionText,
+    component.heroHeadingText,
+    component.heroPrimaryButtonText,
+    component.heroSecondaryButtonText,
+  ]);
 
-    return elements;
-  };
+  const [heroElements, setHeroElements] = React.useState<HeroElement[]>(() => {
+    const storedElements = component.props?.heroElements as HeroElement[] | undefined;
+    return storedElements?.length ? storedElements : createDefaultElements();
+  });
 
-  const [heroElements, setHeroElements] = React.useState<HeroElement[]>(() => initializeElements());
+  const persistHeroElements = React.useCallback(
+    (nextElements: HeroElement[], updates: Partial<BuilderComponent> = {}) => {
+      setHeroElements(nextElements);
+      onUpdate(component.id, {
+        ...updates,
+        props: {
+          ...(component.props || {}),
+          heroElements: nextElements,
+        },
+      });
+    },
+    [component.id, component.props, onUpdate],
+  );
 
   React.useEffect(() => {
-    setHeroElements(initializeElements());
+    const storedElements = component.props?.heroElements as HeroElement[] | undefined;
+    const nextElements = storedElements?.length ? storedElements : createDefaultElements();
+    setHeroElements(nextElements);
     setSelectedElementId(null);
     setHoveredElementId(null);
     setEditingElementId(null);
-  }, [component.id]);
-
-  React.useEffect(() => {
-    setHeroElements((prev) =>
-      prev.map((element) => {
-        if (element.instanceId === "badge-0") {
-          return { ...element, content: component.heroBadgeText || defaultElementContent.badge };
-        }
-        if (element.instanceId === "heading-0") {
-          return { ...element, content: component.heroHeadingText || defaultElementContent.heading };
-        }
-        if (element.instanceId === "paragraph-0") {
-          return { ...element, content: component.heroDescriptionText || defaultElementContent.paragraph };
-        }
-        return element;
-      }),
-    );
-  }, [component.heroBadgeText, component.heroHeadingText, component.heroDescriptionText]);
+  }, [component.id, component.props?.heroElements, createDefaultElements]);
 
   const getComponentStyles = () => {
     const styles: React.CSSProperties = {};
@@ -153,38 +157,51 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     onSelect?.(component.id);
     onUpdate(component.id, {
       selectedHeroElement: newSelectedId ? selectedElement?.type ?? null : null,
+      props: {
+        ...(component.props || {}),
+        heroElements,
+      },
     });
   };
 
   const handleElementUpdate = (instanceId: string, content: string) => {
-    if (instanceId === "primaryButton" || instanceId === "primaryButton-0") {
-      onUpdate(component.id, { heroPrimaryButtonText: content });
-      return;
-    }
-
-    if (instanceId === "secondaryButton" || instanceId === "secondaryButton-0") {
-      onUpdate(component.id, { heroSecondaryButtonText: content });
-      return;
-    }
-
     const element = heroElements.find((el) => el.instanceId === instanceId);
     if (!element) return;
 
-    const updatedElements = heroElements.map((el) =>
-      el.instanceId === instanceId ? { ...el, content } : el,
-    );
-    setHeroElements(updatedElements);
+    const updatedElements = heroElements.map((el) => {
+      if (el.instanceId !== instanceId) return el;
 
-    const fieldMap = {
-      badge: "heroBadgeText",
-      heading: "heroHeadingText",
-      paragraph: "heroDescriptionText",
-    } as const;
+      if (element.type === "buttons") {
+        return {
+          ...el,
+          content: instanceId === "secondaryButton" ? el.content : content,
+          secondaryContent: instanceId === "secondaryButton" ? content : el.secondaryContent,
+        };
+      }
 
-    const fieldKey = fieldMap[element.type as keyof typeof fieldMap];
-    if (fieldKey && instanceId.endsWith("-0")) {
-      onUpdate(component.id, { [fieldKey]: content });
+      return { ...el, content };
+    });
+
+    const updates: Partial<BuilderComponent> = {};
+    if (element.type === "badge" && instanceId.endsWith("-0")) {
+      updates.heroBadgeText = content;
     }
+    if (element.type === "heading" && instanceId.endsWith("-0")) {
+      updates.heroHeadingText = content;
+    }
+    if (element.type === "paragraph" && instanceId.endsWith("-0")) {
+      updates.heroDescriptionText = content;
+    }
+    if (element.type === "buttons") {
+      if (instanceId === "primaryButton" || instanceId === "buttons-0") {
+        updates.heroPrimaryButtonText = content;
+      }
+      if (instanceId === "secondaryButton" || instanceId === "buttons-0") {
+        updates.heroSecondaryButtonText = content;
+      }
+    }
+
+    persistHeroElements(updatedElements, updates);
   };
 
   const handleEditableFocus = (event: React.FocusEvent<HTMLElement>) => {
@@ -192,10 +209,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   };
 
   const handleCopyElement = (instanceId: string) => {
-    const element = heroElements.find(el => el.instanceId === instanceId);
+    const element = heroElements.find((el) => el.instanceId === instanceId);
     if (!element) return;
 
-    // Create a duplicate element with a new instanceId
     const newInstanceId = `${element.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const duplicatedElement: HeroElement = {
       ...element,
@@ -203,12 +219,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       instanceId: newInstanceId,
     };
 
-    // Add the duplicated element to the array
     const updatedElements = [...heroElements];
-    const elementIndex = updatedElements.findIndex(el => el.instanceId === instanceId);
+    const elementIndex = updatedElements.findIndex((el) => el.instanceId === instanceId);
     updatedElements.splice(elementIndex + 1, 0, duplicatedElement);
 
-    setHeroElements(updatedElements);
+    persistHeroElements(updatedElements, { selectedHeroElement: element.type });
     setSelectedElementId(newInstanceId);
   };
 
@@ -217,40 +232,33 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     if (!element) return;
 
     const elementsOfSameType = heroElements.filter((el) => el.type === element.type);
+    let nextElements = heroElements;
+    const updates: Partial<BuilderComponent> = { selectedHeroElement: null };
 
     if (elementsOfSameType.length === 1) {
       if (element.type === "buttons") {
-        onUpdate(component.id, {
-          heroPrimaryButtonText: "Start Free Trial",
-          heroSecondaryButtonText: "Watch Demo",
-          selectedHeroElement: null,
-        });
+        nextElements = heroElements.map((el) =>
+          el.instanceId === instanceId
+            ? { ...el, content: defaultElementContent.buttons, secondaryContent: "Watch Demo" }
+            : el,
+        );
+        updates.heroPrimaryButtonText = defaultElementContent.buttons;
+        updates.heroSecondaryButtonText = "Watch Demo";
       } else {
         const resetContent = defaultElementContent[element.type];
-        const updatedElements = heroElements.map((el) =>
+        nextElements = heroElements.map((el) =>
           el.instanceId === instanceId ? { ...el, content: resetContent } : el,
         );
-        setHeroElements(updatedElements);
 
-        const updateMap = {
-          badge: "heroBadgeText",
-          heading: "heroHeadingText",
-          paragraph: "heroDescriptionText",
-        } as const;
-
-        const key = updateMap[element.type as keyof typeof updateMap];
-        if (key) {
-          onUpdate(component.id, {
-            [key]: resetContent,
-            selectedHeroElement: null,
-          });
-        }
+        if (element.type === "badge") updates.heroBadgeText = resetContent;
+        if (element.type === "heading") updates.heroHeadingText = resetContent;
+        if (element.type === "paragraph") updates.heroDescriptionText = resetContent;
       }
     } else {
-      setHeroElements(heroElements.filter((el) => el.instanceId !== instanceId));
-      onUpdate(component.id, { selectedHeroElement: null });
+      nextElements = heroElements.filter((el) => el.instanceId !== instanceId);
     }
 
+    persistHeroElements(nextElements, updates);
     setSelectedElementId(null);
     setHoveredElementId(null);
     setEditingElementId(null);
@@ -540,9 +548,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4" style={{ maxWidth: buttonsWidth || "100%", fontSize: buttonFontSize || "1.125rem", textAlign: buttonTextAlign }}>
               {isSelected ? (
                 <Input
-                  value={component.heroPrimaryButtonText}
+                  value={element.content}
                   data-element-id="primaryButton"
-                  onChange={(e) => handleElementUpdate("primaryButton", e.target.value)}
+                  onChange={(e) => handleElementUpdate(element.instanceId, e.target.value)}
                   onFocus={handleEditableFocus}
                   onBlur={() => setEditingElementId(null)}
                   onClick={(e) => e.stopPropagation()}
@@ -551,14 +559,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 />
               ) : (
                 <Button className="px-10 py-7 text-lg font-bold rounded-2xl bg-valasys-orange shadow-xl hover:shadow-2xl transition-all hover:bg-valasys-orange/90">
-                  {component.heroPrimaryButtonText || "Start Free Trial"}
+                  {element.content || defaultElementContent.buttons}
                 </Button>
               )}
               {isSelected ? (
                 <Input
-                  value={component.heroSecondaryButtonText}
+                  value={element.secondaryContent || "Watch Demo"}
                   data-element-id="secondaryButton"
-                  onChange={(e) => handleElementUpdate("secondaryButton", e.target.value)}
+                  onChange={(e) => handleElementUpdate(element.instanceId === "buttons-0" ? element.instanceId : "secondaryButton", e.target.value)}
                   onFocus={handleEditableFocus}
                   onBlur={() => setEditingElementId(null)}
                   onClick={(e) => e.stopPropagation()}
@@ -570,7 +578,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   variant="outline"
                   className="px-10 py-7 text-lg font-bold rounded-2xl border-gray-200"
                 >
-                  {component.heroSecondaryButtonText || "Watch Demo"}
+                  {element.secondaryContent || "Watch Demo"}
                 </Button>
               )}
             </div>
