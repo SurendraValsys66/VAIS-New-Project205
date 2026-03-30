@@ -146,7 +146,13 @@ export const useLayout = (initialData: BuilderComponent[] = []) => {
   const removeComponent = useCallback((id: string) => {
     const removeFromTree = (components: BuilderComponent[]): BuilderComponent[] => {
       return components
-        .filter((comp) => comp.id !== id)
+        .filter((comp) => {
+          if (comp.id === id) {
+            console.log("[useLayout] Removing component:", id);
+            return false;
+          }
+          return true;
+        })
         .map((comp) => {
           if (comp.children) {
             return { ...comp, children: removeFromTree(comp.children) };
@@ -154,7 +160,11 @@ export const useLayout = (initialData: BuilderComponent[] = []) => {
           return comp;
         });
     };
-    setLayout((prev) => removeFromTree(prev));
+    setLayout((prev) => {
+      const updated = removeFromTree(prev);
+      console.log("[useLayout] After remove, layout length:", updated.length);
+      return updated;
+    });
   }, []);
 
   const duplicateComponent = useCallback((id: string) => {
@@ -168,43 +178,51 @@ export const useLayout = (initialData: BuilderComponent[] = []) => {
 
     const findAndDuplicate = (
       components: BuilderComponent[],
-    ): { components: BuilderComponent[]; found: boolean } => {
-      let found = false;
-      const newComponents: BuilderComponent[] = [];
+    ): { components: BuilderComponent[]; duplicated: boolean } => {
+      const result: BuilderComponent[] = [];
+      let duplicated = false;
 
       for (const comp of components) {
+        // First add the current component
         if (comp.id === id) {
-          // Found the component to duplicate - add original and duplicate
-          found = true;
-          newComponents.push(comp);
-          const duplicate = deepCloneComponent(comp);
-          newComponents.push(duplicate);
-        } else if (comp.children && comp.children.length > 0) {
-          // Recursively search in children
-          const result = findAndDuplicate(comp.children);
-          if (result.found) {
-            found = true;
-            // Create a new component with updated children
-            newComponents.push({
-              ...comp,
-              children: result.components,
-            });
-          } else {
-            // Children were not modified, push original
-            newComponents.push(comp);
-          }
+          // This is the component to duplicate - add it and a copy
+          result.push(comp);
+          result.push(deepCloneComponent(comp));
+          duplicated = true;
+          console.log("[useLayout] Duplicated component:", id);
         } else {
-          // No children or not found - push original
-          newComponents.push(comp);
+          // Process children if they exist
+          if (comp.children && comp.children.length > 0) {
+            const { components: processedChildren, duplicated: childDuplicated } =
+              findAndDuplicate(comp.children);
+
+            if (childDuplicated) {
+              // Child was duplicated, create new component reference
+              result.push({
+                ...comp,
+                children: processedChildren,
+              });
+              duplicated = true;
+            } else {
+              // No duplication in children, use original
+              result.push(comp);
+            }
+          } else {
+            // No children, just add component
+            result.push(comp);
+          }
         }
       }
 
-      return { components: newComponents, found };
+      return { components: result, duplicated };
     };
 
     setLayout((prev) => {
-      const result = findAndDuplicate(prev);
-      return result.components;
+      const { components: updated, duplicated } = findAndDuplicate(prev);
+      if (!duplicated) {
+        console.warn("[useLayout] Component not found for duplication:", id);
+      }
+      return updated;
     });
   }, []);
 
