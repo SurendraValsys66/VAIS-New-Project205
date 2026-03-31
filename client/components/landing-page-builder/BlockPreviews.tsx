@@ -425,20 +425,16 @@ export const PricingBlockPreview: React.FC<BlockPreviewProps> = ({
           {props.pricingTiers?.map((tier: any) => (
             <div
               key={tier.id}
-              className={`rounded-lg p-8 text-center transition-all relative cursor-pointer ${
-                tier.isHighlighted
-                  ? "bg-gray-900 text-white shadow-lg scale-105"
-                  : "bg-white border border-gray-200"
+              className={`rounded-lg p-8 text-center transition-all relative cursor-pointer bg-white ${
+                tier.isHighlighted ? "text-white shadow-lg scale-105" : ""
               }`}
               style={{
-                borderStyle: selectedTierId === tier.id ? "solid" : hoveredTierId === tier.id ? "dotted" : undefined,
-                borderWidth: selectedTierId === tier.id || hoveredTierId === tier.id ? "3px" : undefined,
-                borderColor:
-                  selectedTierId === tier.id
-                    ? "#FF6A00"
-                    : hoveredTierId === tier.id
-                    ? "#FF6A00"
-                    : undefined,
+                backgroundColor: tier.isHighlighted ? "#1f2937" : "#ffffff",
+                border: selectedTierId === tier.id
+                  ? "3px solid #FF6A00"
+                  : hoveredTierId === tier.id
+                  ? "3px dotted #FF6A00"
+                  : "1px solid #e5e7eb",
               }}
               onMouseEnter={() => setHoveredTierId(tier.id)}
               onMouseLeave={() => setHoveredTierId(null)}
